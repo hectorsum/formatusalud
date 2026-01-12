@@ -11,7 +11,8 @@ type DoctorWithUser = Doctor & { user: User };
 
 export function BookingClient({ doctors }: { doctors: DoctorWithUser[] }) {
   const router = useRouter();
-  const [selectedDoctorId, setSelectedDoctorId] = useState<string>(doctors[0]?.id || '');
+  const [filterSpecialty, setFilterSpecialty] = useState<string>('ALL');
+  const [selectedDoctorId, setSelectedDoctorId] = useState<string>('');
   const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
@@ -83,24 +84,52 @@ export function BookingClient({ doctors }: { doctors: DoctorWithUser[] }) {
     <div className="space-y-8">
       {/* 1. Doctor Selection */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-          <UserIcon className="h-5 w-5 text-teal-600" /> 1. Select Specialist
-        </h3>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <UserIcon className="h-5 w-5 text-teal-600" /> 1. Select Specialist
+          </h3>
+
+          {/* Specialty Filter */}
+          <select
+            className="rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm focus:border-teal-500 focus:outline-none focus:ring-teal-500"
+            onChange={(e) => {
+              // Reset selection when filter changes
+              setSelectedDoctorId('');
+              setSlots([]);
+              setDate('');
+              // Filter logic handled in render
+              const val = e.target.value;
+              // Set a state for filter (need to add this state)
+              setFilterSpecialty(val);
+            }}
+          >
+            <option value="ALL">All Specialties</option>
+            {Array.from(new Set(doctors.map(d => d.specialty))).map(spec => (
+              <option key={spec} value={spec}>{spec}</option>
+            ))}
+          </select>
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {doctors.map((doc) => (
-            <div
-              key={doc.id}
-              onClick={() => { setSelectedDoctorId(doc.id); setSlots([]); setDate(''); }}
-              className={`cursor-pointer rounded-lg border p-4 transition-all ${selectedDoctorId === doc.id
+          {doctors
+            .filter(doc => filterSpecialty === 'ALL' || doc.specialty === filterSpecialty)
+            .map((doc) => (
+              <div
+                key={doc.id}
+                onClick={() => { setSelectedDoctorId(doc.id); setSlots([]); setDate(''); }}
+                className={`cursor-pointer rounded-lg border p-4 transition-all ${selectedDoctorId === doc.id
                   ? 'border-teal-500 bg-teal-50 ring-1 ring-teal-500'
                   : 'border-slate-200 hover:border-teal-200 hover:bg-slate-50'
-                }`}
-            >
-              <div className="font-medium text-slate-900">{doc.user.name}</div>
-              <div className="text-sm text-slate-500">{doc.specialty}</div>
-            </div>
-          ))}
+                  }`}
+              >
+                <div className="font-medium text-slate-900">{doc.user.name}</div>
+                <div className="text-sm text-slate-500">{doc.specialty}</div>
+              </div>
+            ))}
         </div>
+        {doctors.filter(doc => filterSpecialty === 'ALL' || doc.specialty === filterSpecialty).length === 0 && (
+          <p className="text-sm text-slate-500 italic">No specialists found for this category.</p>
+        )}
       </div>
 
       {/* 2. Date Selection */}
@@ -136,8 +165,8 @@ export function BookingClient({ doctors }: { doctors: DoctorWithUser[] }) {
                   key={slot.id}
                   onClick={() => setSelectedSlotId(slot.id)}
                   className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${selectedSlotId === slot.id
-                      ? 'bg-teal-600 text-white shadow-sm'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:border-teal-300 hover:bg-teal-50'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'bg-white border border-slate-200 text-slate-700 hover:border-teal-300 hover:bg-teal-50'
                     }`}
                 >
                   {timeString}

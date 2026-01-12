@@ -15,6 +15,15 @@ export const LoginSchema = z.object({
   password: z.string().min(1, { message: 'Password field must not be empty.' }),
 });
 
+export type SignupFormState = {
+  errors?: {
+    name?: string[];
+    email?: string[];
+    password?: string[];
+  };
+  message?: string;
+} | undefined;
+
 // Session payload type
 export type SessionPayload = {
   userId: string;

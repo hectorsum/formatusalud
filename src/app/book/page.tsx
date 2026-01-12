@@ -1,4 +1,5 @@
 import { Navbar } from '@/components/layout/navbar';
+import { Footer } from '@/components/layout/footer';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/session';
 import { redirect } from 'next/navigation';
@@ -27,6 +28,7 @@ export default async function BookingPage() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

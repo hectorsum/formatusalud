@@ -6,91 +6,91 @@ const prisma = new PrismaClient()
 async function main() {
   console.log('Start seeding ...')
 
-  // 1. Create Doctor User
+  // 1. Define Doctors Data
   const salt = await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash('doctor123', salt); // Default password
+  const passwordHash = await bcrypt.hash('formatusalud123', salt); // Standard secure password
 
-  const doctorEmail = 'doctor@formatusalud.com';
-
-  // Upsert User
-  const doctorUser = await prisma.user.upsert({
-    where: { email: doctorEmail },
-    update: {},
-    create: {
-      email: doctorEmail,
-      name: 'Dr. Hector',
-      role: Role.DOCTOR,
-      passwordHash: hash,
-      doctorProfile: {
-        create: {
-          specialty: 'Urology',
-          active: true
-        }
-      }
+  const doctorsData = [
+    {
+      name: "Dr. Kilder García Murga",
+      email: "kilder.garcia@formatusalud.com",
+      specialty: "Urología"
     },
-    include: { doctorProfile: true }
-  });
+    {
+      name: "Dra. Laura Romero",
+      email: "laura.romero@formatusalud.com",
+      specialty: "Dermatología"
+    },
+    {
+      name: "Dr. Juan Carlos Valverde",
+      email: "juan.valverde@formatusalud.com",
+      specialty: "Coloproctología y Cirugía General"
+    }
+  ];
 
-  console.log(`Created/Found Doctor: ${doctorUser.name}`);
+  for (const doc of doctorsData) {
+    // Upsert User
+    const user = await prisma.user.upsert({
+      where: { email: doc.email },
+      update: {},
+      create: {
+        email: doc.email,
+        name: doc.name,
+        role: Role.DOCTOR,
+        passwordHash: passwordHash,
+        doctorProfile: {
+          create: {
+            specialty: doc.specialty, // Spanish specialty
+            active: true
+          }
+        }
+      },
+      include: { doctorProfile: true }
+    });
 
-  if (!doctorUser.doctorProfile) {
-    console.error('Doctor profile missing');
-    return;
-  }
+    console.log(`Synced Doctor: ${user.name} (${doc.specialty})`);
 
-  // 2. Create slots for next 7 days
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    if (!user.doctorProfile) continue;
 
-  let slotsCount = 0;
+    // 2. Create slots for next 7 days for each doctor
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let slotsCreated = 0;
 
-  for (let i = 0; i < 7; i++) {
-    const day = new Date(today);
-    day.setDate(day.getDate() + i);
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(today);
+      day.setDate(day.getDate() + i);
 
-    // 9:00 to 17:00
-    for (let hour = 9; hour < 17; hour++) {
-      // Slot 1: 00-30
-      const start1 = new Date(day);
-      start1.setHours(hour, 0, 0, 0);
-      const end1 = new Date(start1);
-      end1.setMinutes(30);
+      // 9:00 to 17:00
+      for (let hour = 9; hour < 17; hour++) {
+        const start = new Date(day);
+        start.setHours(hour, 0, 0, 0);
+        const end = new Date(start);
+        end.setMinutes(30);
 
-      // Slot 2: 30-00
-      const start2 = new Date(day);
-      start2.setHours(hour, 30, 0, 0);
-      const end2 = new Date(start2);
-      end2.setMinutes(30);
-
-      const slotsBatch = [
-        { start: start1, end: end1 },
-        { start: start2, end: end2 }
-      ];
-
-      for (const slot of slotsBatch) {
-        // Check if exists to avoid dups on multiple seed runs
+        // Check availability to avoid duplicates
         const exists = await prisma.availabilitySlot.findFirst({
           where: {
-            doctorId: doctorUser.doctorProfile.id,
-            startTime: slot.start
+            doctorId: user.doctorProfile.id,
+            startTime: start
           }
         });
 
         if (!exists) {
           await prisma.availabilitySlot.create({
             data: {
-              doctorId: doctorUser.doctorProfile.id,
-              startTime: slot.start,
-              endTime: slot.end,
+              doctorId: user.doctorProfile.id,
+              startTime: start,
+              endTime: end,
               isAvailable: true
             }
           });
-          slotsCount++;
+          slotsCreated++;
         }
       }
     }
+    console.log(`  - Slots managed for ${user.name}: +${slotsCreated} new`);
   }
-  console.log(`Seeded ${slotsCount} availability slots.`);
 }
 
 main()
