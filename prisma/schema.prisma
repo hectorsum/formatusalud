@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  PATIENT
+  DOCTOR
+  ADMIN
+}
+
+enum AppointmentStatus {
+  PENDING_PAYMENT
+  PAID
+  CONFIRMED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  CREATED
+  PAID
+  FAILED
+}
+
+enum PaymentProvider {
+  CULQI
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(PATIENT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  doctorProfile Doctor?
+  appointments  Appointment[] @relation("PatientAppointments")
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model Doctor {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  specialty String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  // Relations
+  user              User               @relation(fields: [userId], references: [id])
+  availabilitySlots AvailabilitySlot[]
+  appointments      Appointment[]      @relation("DoctorAppointments")
+
+  @@map("doctors")
+}
+
+model AvailabilitySlot {
+  id        String   @id @default(uuid())
+  doctorId  String
+  startTime DateTime
+  endTime   DateTime
+  isAvailable Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  // Relations
+  doctor Doctor @relation(fields: [doctorId], references: [id])
+  
+  // Index for faster availability lookups
+  @@index([doctorId, startTime])
+  @@map("availability_slots")
+}
+
+model Appointment {
+  id        String            @id @default(uuid())
+  patientId String
+  doctorId  String
+  startTime DateTime
+  endTime   DateTime
+  status    AppointmentStatus @default(PENDING_PAYMENT)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  // Relations
+  patient User   @relation("PatientAppointments", fields: [patientId], references: [id])
+  doctor  Doctor @relation("DoctorAppointments", fields: [doctorId], references: [id])
+  payment Payment?
+
+  @@index([patientId])
+  @@index([doctorId, startTime])
+  @@map("appointments")
+}
+
+model Payment {
+  id                String          @id @default(uuid())
+  appointmentId     String          @unique
+  provider          PaymentProvider @default(CULQI)
+  providerReference String // e.g., Culqi Order ID or Charge ID
+  amount            Int             // In cents/minimum unit
+  currency          String          @default("PEN")
+  status            PaymentStatus   @default(CREATED)
+  paidAt            DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  // Relations
+  appointment Appointment @relation(fields: [appointmentId], references: [id])
+
+  @@map("payments")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  entity    String // e.g., "Appointment", "Payment"
+  entityId  String
+  action    String // e.g., "BOOKED", "PAID"
+  actorId   String? // Nullable if system action
+  metadata  Json? // Extra details
+  createdAt DateTime @default(now())
+
+  // Relations
+  actor User? @relation(fields: [actorId], references: [id])
+
+  @@map("audit_logs")
+}

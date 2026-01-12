@@ -1,0 +1,3 @@
+export const CONSULTATION_PRICE_CENTS = 10000; // 100.00 PEN
+export const CURRENCY = 'PEN';
+export const APPOINTMENT_DURATION_MINUTES = 30;
