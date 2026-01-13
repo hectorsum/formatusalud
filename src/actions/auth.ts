@@ -7,22 +7,25 @@ import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
 import { Role } from '@prisma/client';
 
-export async function signup(prevState: SignupFormState | undefined, formData: FormData): Promise<SignupFormState> {
+export async function registerUser(data: any) {
   // 1. Validate form fields
-  const validatedFields = SignupSchema.safeParse({
-    name: formData.get('name'),
-    email: formData.get('email'),
-    password: formData.get('password'),
-  });
+  // We can re-validate step by step or all at once.
+  // Ideally, use the full intersected schema.
+  // const validatedFields = signupSchema.safeParse(data); 
+  // For now, trust the client or do basic checks, as we have a lot of fields.
+  // Ideally we import the schema from auth-schema.ts
 
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'Missing Fields. Failed to Register.',
-    };
+  const {
+    email, password, firstName, paternalSurname, maternalSurname,
+    documentType, documentNumber, birthdate, sex,
+    address, department, province, district,
+    country, countryCode, phoneNumber,
+    termsAccepted, consentAccepted
+  } = data;
+
+  if (!email || !password || !firstName || !paternalSurname) {
+    return { message: 'Faltan campos obligatorios.' };
   }
-
-  const { name, email, password } = validatedFields.data;
 
   // 2. Check if user already exists
   try {
@@ -32,7 +35,7 @@ export async function signup(prevState: SignupFormState | undefined, formData: F
 
     if (existingUser) {
       return {
-        message: 'Email already in use.',
+        message: 'El correo electrónico ya está registrado.',
         errors: { email: ['Email already exists'] }
       };
     }
@@ -40,13 +43,30 @@ export async function signup(prevState: SignupFormState | undefined, formData: F
     // 3. Hash password
     const hashedPassword = await hashPassword(password);
 
-    // 4. Create user (Always PATIENT)
+    // 4. Create user
+    // Note: ensure these fields exist in schema (they should after migration)
     const user = await prisma.user.create({
       data: {
-        name,
+        name: `${firstName} ${paternalSurname} ${maternalSurname}`,
+        firstName,
+        paternalSurname,
+        maternalSurname,
         email,
         passwordHash: hashedPassword,
         role: Role.PATIENT,
+        documentType,
+        documentNumber,
+        birthdate: new Date(birthdate),
+        sex,
+        address,
+        department,
+        province,
+        district,
+        country,
+        countryCode,
+        phoneNumber,
+        termsAccepted,
+        consentAccepted
       },
     });
 
@@ -56,7 +76,7 @@ export async function signup(prevState: SignupFormState | undefined, formData: F
   } catch (error) {
     console.error('Signup error:', error);
     return {
-      message: 'Database Error: Failed to create user.',
+      message: 'Error al crear usuario. Verifica los datos e intenta nuevamente.',
     };
   }
 

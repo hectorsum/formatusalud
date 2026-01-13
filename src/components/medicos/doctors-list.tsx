@@ -106,7 +106,7 @@ export function DoctorsList() {
               key={spec}
               onClick={() => setFilterSpecialty(spec)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition whitespace-nowrap ${filterSpecialty === spec
-                ? 'bg-[#029d9b] text-white shadow-md'
+                ? 'bg-[#c8a882] text-white shadow-md'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
             >
@@ -133,7 +133,7 @@ export function DoctorsList() {
             </div>
             <div className="p-6 flex-grow flex flex-col relative">
               <h3 className="text-xl font-bold text-[#0c2340] mb-1">{doc.name}</h3>
-              <p className="text-[#029d9b] font-bold text-sm mb-4 uppercase tracking-wide">{doc.specialty}</p>
+              <p className="text-[#c8a882] font-bold text-sm mb-4 uppercase tracking-wide">{doc.specialty}</p>
 
               <div className="flex gap-4 mb-6 text-xs text-slate-500 font-mono border-t border-b border-slate-100 py-2">
                 <span className="flex items-center gap-1"><FileBadge className="w-3 h-3 text-[#c8a882]" /> CMP: {doc.cmp}</span>
@@ -183,7 +183,7 @@ export function DoctorsList() {
               <div className="md:w-3/5 p-8 md:p-10 bg-slate-50">
                 <div className="mb-6">
                   <h2 className="text-3xl font-bold text-[#0c2340] mb-2">{selectedDoctor.name}</h2>
-                  <p className="text-xl text-[#029d9b] font-medium">{selectedDoctor.specialty}</p>
+                  <p className="text-xl text-[#c8a882] font-medium">{selectedDoctor.specialty}</p>
                   <div className="flex gap-4 mt-3 text-sm font-bold text-slate-600">
                     <span className="flex items-center gap-1.5 px-3 py-1 bg-white rounded-full shadow-sm"><FileBadge className="w-4 h-4 text-[#c8a882]" /> CMP: {selectedDoctor.cmp}</span>
                     <span className="flex items-center gap-1.5 px-3 py-1 bg-white rounded-full shadow-sm"><Award className="w-4 h-4 text-[#c8a882]" /> RNE: {selectedDoctor.rne}</span>

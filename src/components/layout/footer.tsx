@@ -46,7 +46,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm">
               <li><Link href="#" className="hover:text-[#766341] transition">Términos y Condiciones</Link></li>
               <li><Link href="#" className="hover:text-[#766341] transition">Política de Privacidad</Link></li>
-              <li><Link href="#" className="hover:text-[#766341] transition">Libro de Reclamaciones</Link></li>
+              <li><Link href="/libro-reclamaciones" className="hover:text-[#766341] transition">Libro de Reclamaciones</Link></li>
               <li><Link href="#" className="hover:text-[#766341] transition">Política de Cookies</Link></li>
             </ul>
           </div>

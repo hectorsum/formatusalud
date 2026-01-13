@@ -8,7 +8,7 @@ import { ArrowRight } from 'lucide-react';
 
 // Colors: 
 // Navy (Primary Text/Headings): #0c2340  (Tailwind closest: slate-900 or custom)
-// Teal (Branding): #029d9b
+// Teal (Branding): #c8a882
 // Gold (Accent): #c8a882
 
 export default function Home() {
@@ -30,7 +30,7 @@ export default function Home() {
       <section
         className="relative py-32 sm:py-48 bg-cover bg-center text-left"
         style={{
-          backgroundImage: `linear-gradient(rgba(12, 35, 64, 0.7), rgba(12, 35, 64, 0.7)), url('/clinic-building.jpg')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/landing_hero_bg_v2_1768264302036.png')`
         }}
       >
         <div className="container mx-auto px-4 relative z-10">
@@ -66,27 +66,45 @@ export default function Home() {
           </p>
 
           <div className="grid md:grid-cols-2 gap-10">
-            {/* Card 1 */}
-            <div className="rounded-xl overflow-hidden shadow-lg bg-white group hover:-translate-y-1 transition duration-300">
-              <div className="h-64 bg-gradient-to-br from-[#667eea] to-[#764ba2]"></div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-[#0c2340] mb-4">Nuestros Especialistas</h3>
-                <p className="text-slate-600 mb-6">
+            {/* Card 1: Specialists */}
+            <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-xl group cursor-pointer">
+              <Image
+                src="/specialists_card_bg_1768264475971.png"
+                alt="Nuestros Especialistas"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c2340]/90 to-[#0c2340]/20 group-hover:from-[#0c2340]/95 transition-all duration-300" />
+
+              <div className="absolute bottom-0 left-0 p-8 w-full z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 className="text-3xl font-bold text-white mb-4">Nuestros Especialistas</h3>
+                <p className="text-slate-200 mb-6 text-lg leading-relaxed opacity-90">
                   Nuestros médicos están capacitados en prácticamente todas las subespecialidades. Ofrecemos los servicios más completos de la región.
                 </p>
-                <a href="#" className="text-[#029d9b] font-semibold hover:text-[#0c2340] transition">Leer Más →</a>
+                <div className="flex items-center gap-2 text-[#c8a882] font-bold group-hover:gap-3 transition-all">
+                  Conocer Equipo <ArrowRight className="w-5 h-5" />
+                </div>
               </div>
             </div>
 
-            {/* Card 2 */}
-            <div className="rounded-xl overflow-hidden shadow-lg bg-white group hover:-translate-y-1 transition duration-300">
-              <div className="h-64 bg-gradient-to-br from-[#a1c4fd] to-[#c2e9fb]"></div>
-              <div className="p-8">
-                <h3 className="text-2xl font-bold text-[#0c2340] mb-4">Nuestra Misión</h3>
-                <p className="text-slate-600 mb-6">
+            {/* Card 2: Mission */}
+            <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-xl group cursor-pointer">
+              <Image
+                src="/mission_card_bg_1768264489656.png"
+                alt="Nuestra Misión"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0c2340]/90 to-[#0c2340]/20 group-hover:from-[#0c2340]/95 transition-all duration-300" />
+
+              <div className="absolute bottom-0 left-0 p-8 w-full z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                <h3 className="text-3xl font-bold text-white mb-4">Nuestra Misión</h3>
+                <p className="text-slate-200 mb-6 text-lg leading-relaxed opacity-90">
                   Nos comprometemos a brindar una atención inigualable e innovadora a las comunidades a las que servimos. Desde el diagnóstico hasta el tratamiento.
                 </p>
-                <a href="#" className="text-[#029d9b] font-semibold hover:text-[#0c2340] transition">Leer Más →</a>
+                <div className="flex items-center gap-2 text-[#c8a882] font-bold group-hover:gap-3 transition-all">
+                  Leer Más <ArrowRight className="w-5 h-5" />
+                </div>
               </div>
             </div>
           </div>
@@ -102,23 +120,20 @@ export default function Home() {
 
           <div className="flex flex-wrap justify-center gap-8 mb-16">
             {services.map((service, idx) => (
-              <div key={idx} className="w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-2rem)] bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 group overflow-hidden">
-                <div className="relative h-64 overflow-hidden">
-                  <div className="absolute inset-0 bg-[#0c2340]/10 group-hover:bg-[#0c2340]/0 transition-colors z-10" />
-                  <Image
-                    src={service.image}
-                    alt={service.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-                  />
-                </div>
+              <div key={idx} className="relative h-[350px] w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.333%-2rem)] rounded-2xl overflow-hidden shadow-lg group cursor-pointer hover:shadow-2xl transition-all duration-300">
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0c2340]/90 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-300" />
 
-                <div className="relative bg-white pt-8 pb-8 px-6 text-center">
-                  <div className="absolute top-[-20px] left-0 right-0 h-[40px] bg-white rounded-t-[50%] transform scale-x-150 z-20"></div>
-                  <h4 className="relative z-30 text-xl font-bold text-[#0c2340] mb-3">{service.title}</h4>
+                <div className="absolute bottom-0 left-0 p-6 w-full translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
+                  <h4 className="text-2xl font-bold text-white mb-2">{service.title}</h4>
 
-                  <Link href={service.link} className="relative z-30 inline-flex items-center gap-2 text-sm font-bold text-[#c8a882] hover:text-[#b89772] transition-colors group-hover:gap-3">
-                    Conocer más <ArrowRight className="w-4 h-4" />
+                  <Link href={service.link} className="inline-flex items-center gap-2 text-[#c8a882] font-bold group-hover:gap-3 transition-all">
+                    Conocer más <ArrowRight className="w-5 h-5" />
                   </Link>
                 </div>
               </div>
@@ -127,7 +142,7 @@ export default function Home() {
 
           <div className="text-center">
             <Link href="/servicios">
-              <Button size="lg" className="bg-[#029d9b] hover:bg-[#028b89] text-white font-semibold rounded-full shadow-md px-10">
+              <Button size="lg" className="bg-[#c8a882] hover:bg-[#028b89] text-white font-semibold rounded-full shadow-md px-10">
                 Ver Todos los Servicios
               </Button>
             </Link>

@@ -39,6 +39,28 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
+  // Profile Fields
+  documentType    String   @default("DNI")
+  documentNumber  String   @default("")
+  birthdate       DateTime?
+  firstName       String?
+  paternalSurname String?
+  maternalSurname String?
+  sex             String?
+  
+  // Location
+  address         String?
+  department      String?
+  province        String?
+  district        String?
+  country         String   @default("Peru")
+  
+  // Contact & Consent
+  countryCode     String   @default("+51")
+  phoneNumber     String?
+  termsAccepted   Boolean  @default(false)
+  consentAccepted Boolean  @default(false)
+
   // Relations
   doctorProfile Doctor?
   appointments  Appointment[] @relation("PatientAppointments")
@@ -129,4 +151,46 @@ model AuditLog {
   actor User? @relation(fields: [actorId], references: [id])
 
   @@map("audit_logs")
+}
+
+enum ClaimStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+model Claim {
+  id              String      @id @default(uuid())
+  // User Data
+  firstName       String
+  paternalSurname String
+  maternalSurname String
+  documentType    String
+  documentNumber  String
+  
+  // Contact
+  email           String
+  phone           String?
+  cellphone       String?
+  address         String
+  district        String
+  department      String
+
+  // Incident
+  isMinor         Boolean     @default(false)
+  affectedPersonType String   // "PATIENT" | "THIRD_PARTY"
+  claimType       String      // "CLAIM" (Reclamo) | "COMPLAINT" (Queja)
+  claimDetail     String      @db.Text
+  incidentDate    DateTime    @default(now())
+  
+  // Attachments
+  attachmentPath  String?
+  
+  // Status
+  status          ClaimStatus @default(PENDING)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@map("claims")
 }

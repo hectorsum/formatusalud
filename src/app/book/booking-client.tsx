@@ -91,7 +91,7 @@ export function BookingClient({ doctors }: { doctors: DoctorWithUser[] }) {
 
           {/* Specialty Filter */}
           <select
-            className="rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm focus:border-teal-500 focus:outline-none focus:ring-teal-500"
+            className="rounded-md border-slate-300 py-2 pl-3 pr-10 text-sm focus:border-accent focus:outline-none focus:ring-accent"
             onChange={(e) => {
               // Reset selection when filter changes
               setSelectedDoctorId('');
@@ -118,7 +118,7 @@ export function BookingClient({ doctors }: { doctors: DoctorWithUser[] }) {
                 key={doc.id}
                 onClick={() => { setSelectedDoctorId(doc.id); setSlots([]); setDate(''); }}
                 className={`cursor-pointer rounded-lg border p-4 transition-all ${selectedDoctorId === doc.id
-                  ? 'border-teal-500 bg-teal-50 ring-1 ring-teal-500'
+                  ? 'border-accent bg-teal-50 ring-1 ring-accent'
                   : 'border-slate-200 hover:border-teal-200 hover:bg-slate-50'
                   }`}
               >
@@ -143,6 +143,7 @@ export function BookingClient({ doctors }: { doctors: DoctorWithUser[] }) {
             value={date}
             onChange={handleDateChange}
             min={new Date().toISOString().split('T')[0]} // Disable past dates
+            className="focus:ring-accent focus:border-accent"
           />
         </div>
       </div>
