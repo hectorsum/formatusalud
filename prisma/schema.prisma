@@ -107,6 +107,7 @@ model Appointment {
   startTime DateTime
   endTime   DateTime
   status    AppointmentStatus @default(PENDING_PAYMENT)
+  appointmentType String      @default("IN_PERSON") // 'virtual' | 'in-person'
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
 
@@ -114,6 +115,7 @@ model Appointment {
   patient User   @relation("PatientAppointments", fields: [patientId], references: [id])
   doctor  Doctor @relation("DoctorAppointments", fields: [doctorId], references: [id])
   payment Payment?
+  medicalRecord MedicalRecord?
 
   @@index([patientId])
   @@index([doctorId, startTime])
@@ -193,4 +195,22 @@ model Claim {
   updatedAt       DateTime    @updatedAt
 
   @@map("claims")
+}
+
+model MedicalRecord {
+  id              String      @id @default(uuid())
+  appointmentId   String      @unique
+  appointment     Appointment @relation(fields: [appointmentId], references: [id])
+  
+  diagnosis       String       // Main diagnosis
+  symptoms        String?      // Patient complaints
+  prescription    String?      // Medications/Treatment
+  notes           String?      // General checks/observations
+  
+  type            String      @default("CONSULTATION") // CONSULTATION, FOLLOW_UP, CHECKUP
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt // To track edits
+
+  @@map("medical_records")
 }

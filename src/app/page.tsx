@@ -30,7 +30,7 @@ export default function Home() {
       <section
         className="relative py-32 sm:py-48 bg-cover bg-center text-left"
         style={{
-          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/landing_hero_bg_v2_1768264302036.png')`
+          backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/landing_hero_v3.png')`
         }}
       >
         <div className="container mx-auto px-4 relative z-10">
@@ -164,7 +164,7 @@ export default function Home() {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 z-0">
           <Image
-            src="/hero-bg.png"
+            src="/landing_footer_v3.png"
             alt="Medical Facility"
             fill
             className="object-cover"

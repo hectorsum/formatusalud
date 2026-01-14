@@ -15,10 +15,10 @@ export type BookingResult = {
   culqiPublicKey?: string;
 };
 
-export async function getAvailableSlots(doctorId: string, date: string) {
+export async function getAvailableSlots(doctorId: string, date: string, endDate?: string) {
   // date string YYYY-MM-DD
   const startOfDay = new Date(`${date}T00:00:00`);
-  const endOfDay = new Date(`${date}T23:59:59`);
+  const endOfDay = endDate ? new Date(`${endDate}T23:59:59`) : new Date(`${date}T23:59:59`);
 
   const slots = await prisma.availabilitySlot.findMany({
     where: {
@@ -35,7 +35,7 @@ export async function getAvailableSlots(doctorId: string, date: string) {
   return slots;
 }
 
-export async function bookAppointment(slotId: string): Promise<BookingResult> {
+export async function bookAppointment(slotId: string, appointmentType: string): Promise<BookingResult> {
   const session = await verifySession();
   if (!session || !session.userId) {
     return { success: false, message: 'Unauthorized' };
@@ -74,6 +74,7 @@ export async function bookAppointment(slotId: string): Promise<BookingResult> {
           startTime: slot.startTime,
           endTime: slot.endTime,
           status: AppointmentStatus.PENDING_PAYMENT,
+          appointmentType,
         },
       });
 

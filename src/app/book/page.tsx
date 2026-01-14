@@ -3,7 +3,7 @@ import { Footer } from '@/components/layout/footer';
 import { prisma } from '@/lib/prisma';
 import { verifySession } from '@/lib/session';
 import { redirect } from 'next/navigation';
-import { BookingClient } from './booking-client';
+import { BookingWizard } from '@/components/booking/wizard/booking-wizard';
 
 export default async function BookingPage() {
   const session = await verifySession();
@@ -22,9 +22,9 @@ export default async function BookingPage() {
       <Navbar />
       <main className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-slate-900 mb-8">Book an Appointment</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-8">Reservar una Cita</h1>
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 md:p-8">
-            <BookingClient doctors={doctors} />
+            <BookingWizard doctors={doctors} />
           </div>
         </div>
       </main>

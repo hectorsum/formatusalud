@@ -32,8 +32,8 @@ export default function SignupWizard({ onComplete }: { onComplete: (data: any) =
       documentType: 'DNI',
       documentNumber: '',
       birthdate: '',
-      termsAccepted: false,
-      consentAccepted: false,
+      termsAccepted: false as unknown as true, // Cast to satisfy Zod literal(true) requirement for default value
+      consentAccepted: false as unknown as true,
     },
     mode: 'onBlur',
   });

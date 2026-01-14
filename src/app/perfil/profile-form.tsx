@@ -4,7 +4,7 @@ import { useFormState } from 'react-dom';
 import { updateProfile } from '@/actions/user';
 import { Button } from '@/components/ui/core';
 import { User, Phone, MapPin, Save, CheckCircle, AlertCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useActionState, useEffect, useState } from 'react';
 
 const initialState = {
   message: '',
@@ -24,7 +24,7 @@ interface UserData {
 }
 
 export default function ProfileForm({ user }: { user: UserData }) {
-  const [state, dispatch] = useFormState(updateProfile, initialState);
+  const [state, dispatch] = useActionState(updateProfile, initialState);
   const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {

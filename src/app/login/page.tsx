@@ -9,7 +9,9 @@ import { Ambulance, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+import { Suspense } from 'react';
+
+function LoginFormContent() {
   const [state, dispatch, isPending] = useActionState(login, undefined);
   const [showPassword, setShowPassword] = useState(false);
   const searchParams = useSearchParams();
@@ -126,5 +128,13 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
+      <LoginFormContent />
+    </Suspense>
   );
 }

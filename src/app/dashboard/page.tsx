@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/core';
 import Link from 'next/link';
 import { Role } from '@prisma/client';
+import { PaymentModal } from '@/components/dashboard/payment-modal';
 
 export default async function DashboardPage() {
   const session = await verifySession();
@@ -40,19 +41,19 @@ export default async function DashboardPage() {
 
       <main className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">My Appointments</h1>
+          <h1 className="text-3xl font-bold text-slate-900">Mis Citas</h1>
           <Link href="/book">
-            <Button>Book Appointment</Button>
+            <Button>Reservar Cita</Button>
           </Link>
         </div>
 
         <div className="space-y-12">
           {/* Upcoming */}
           <section>
-            <h2 className="text-xl font-semibold text-slate-800 mb-4">Upcoming</h2>
+            <h2 className="text-xl font-semibold text-slate-800 mb-4">Próximas Citas</h2>
             {upcoming.length === 0 ? (
               <div className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-slate-500">
-                No upcoming appointments.
+                No hay citas próximas.
               </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -65,9 +66,9 @@ export default async function DashboardPage() {
 
           {/* Past */}
           <section>
-            <h2 className="text-xl font-semibold text-slate-800 mb-4">Past History</h2>
+            <h2 className="text-xl font-semibold text-slate-800 mb-4">Historial</h2>
             {past.length === 0 ? (
-              <p className="text-slate-500">No past appointments.</p>
+              <p className="text-slate-500">No hay citas pasadas.</p>
             ) : (
               <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {past.map((appt) => (
@@ -84,20 +85,20 @@ export default async function DashboardPage() {
 
 // --- Components ---
 
+import { DiagnosisForm } from '@/components/dashboard/diagnosis-form';
+import { MedicalRecordView } from '@/components/dashboard/medical-record-view';
+
+// ... (existing imports)
+
 async function DoctorDashboard({ userId }: { userId: string }) {
-  // 1. Get Doctor Profile
+  // ... (existing doctor fetch)
   const doctor = await prisma.doctor.findUnique({
     where: { userId },
   });
 
   if (!doctor) {
-    return (
-      <div className="p-10 text-center">
-        <h1 className="text-2xl font-bold text-red-600">Error</h1>
-        <p>Doctor profile not found for this user.</p>
-        <Link href="/" className="text-blue-600 underline">Go Home</Link>
-      </div>
-    );
+     // ... (error view)
+     return <div>Error</div>; 
   }
 
   // 2. Get Appointments for this doctor
@@ -106,16 +107,18 @@ async function DoctorDashboard({ userId }: { userId: string }) {
       doctorId: doctor.id
     },
     include: {
-      patient: true, // Get patient details
+      patient: true, 
       payment: true,
+      medicalRecord: true, // [NEW] Include record
     },
-    orderBy: { startTime: 'asc' }, // Nearest first
+    orderBy: { startTime: 'asc' }, 
   });
 
   const now = new Date();
-  // Filter for clarity
   const upcoming = appointments.filter(a => new Date(a.startTime) >= now);
   const past = appointments.filter(a => new Date(a.startTime) < now);
+
+  // ... (rest of logic)
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -123,35 +126,35 @@ async function DoctorDashboard({ userId }: { userId: string }) {
       <main className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Doctor Dashboard</h1>
-            <p className="text-slate-500">Welcome, Dr. {doctor.specialty}</p>
+            <h1 className="text-3xl font-bold text-slate-900">Panel de Doctor</h1>
+            <p className="text-slate-500">Bienvenido, Dr. {doctor.specialty}</p>
           </div>
           <div className="flex gap-2">
-            {/* Future: Add 'Manage Slots' button here */}
-            <Button variant="outline">Manage Schedule</Button>
+            <Button variant="outline">Gestionar Horarios</Button>
           </div>
         </div>
 
         <div className="space-y-12">
           <section>
             <div className="flex items-center gap-2 mb-4">
-              <h2 className="text-xl font-semibold text-slate-800">Upcoming Appointments</h2>
+              <h2 className="text-xl font-semibold text-slate-800">Próximas Citas</h2>
               <span className="bg-teal-100 text-teal-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">{upcoming.length}</span>
             </div>
 
             {upcoming.length === 0 ? (
               <div className="bg-white p-8 rounded-lg border text-center text-slate-500">
-                No upcoming patient bookings.
+                No hay reservas de pacientes próximas.
               </div>
             ) : (
               <div className="bg-white shadow rounded-lg overflow-hidden border">
                 <table className="min-w-full divide-y divide-slate-200">
                   <thead className="bg-slate-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Time</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Patient</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Payment</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Hora</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Paciente</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Estado</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Pago</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Acciones</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-slate-200">
@@ -164,17 +167,27 @@ async function DoctorDashboard({ userId }: { userId: string }) {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-900">
                           <div className="font-medium">{appt.patient.name}</div>
                           <div className="text-slate-500 text-xs">{appt.patient.email}</div>
+                          <div className="text-xs text-indigo-600 font-medium capitalize mt-1">
+                             {appt.appointmentType === 'virtual' ? 'Virtual' : 'Presencial'}
+                          </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <StatusBadge status={appt.status} />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
-                          {appt.payment ? (
-                            <span className={appt.payment.status === 'PAID' ? 'text-green-600' : 'text-yellow-600'}>
-                              {appt.payment.status} ({appt.payment.amount / 100} {appt.payment.currency})
-                            </span>
+                            {appt.payment ? (
+                              <span className={appt.payment.status === 'PAID' ? 'text-green-600' : 'text-yellow-600'}>
+                                {appt.payment.status === 'PAID' ? 'PAGADO' : 'PENDIENTE'} ({appt.payment.amount / 100} {appt.payment.currency})
+                              </span>
+                            ) : (
+                              <span className="text-slate-400">-</span>
+                            )}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                          {appt.medicalRecord ? (
+                            <MedicalRecordView record={appt.medicalRecord} />
                           ) : (
-                            <span className="text-slate-400">-</span>
+                            <DiagnosisForm appointmentId={appt.id} patientName={appt.patient.name} />
                           )}
                         </td>
                       </tr>
@@ -185,18 +198,20 @@ async function DoctorDashboard({ userId }: { userId: string }) {
             )}
           </section>
 
-          {/* Past List (Collapsed or simple list) */}
           <section>
-            <h2 className="text-xl font-semibold text-slate-800 mb-4">Past Appointments</h2>
+            <h2 className="text-xl font-semibold text-slate-800 mb-4">Citas Pasadas</h2>
             <div className="text-sm text-slate-500">
-              You have {past.length} past appointments.
+              Tiene {past.length} citas pasadas.
             </div>
           </section>
         </div>
       </main>
     </div>
-  )
+  );
 }
+
+// ... (rest of file)
+
 
 function StatusBadge({ status }: { status: string }) {
   const styles = {
@@ -205,11 +220,19 @@ function StatusBadge({ status }: { status: string }) {
     CONFIRMED: 'bg-green-100 text-green-800',
     CANCELLED: 'bg-red-100 text-red-800',
   };
+  
+  const labels: Record<string, string> = {
+    PENDING_PAYMENT: 'PENDIENTE PAGO',
+    PAID: 'PAGADO',
+    CONFIRMED: 'CONFIRMADO',
+    CANCELLED: 'CANCELADO'
+  };
+
   // @ts-ignore
   const className = styles[status] || 'bg-gray-100 text-gray-800';
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${className}`}>
-      {status.replace('_', ' ')}
+      {labels[status] || status.replace('_', ' ')}
     </span>
   );
 }
@@ -227,27 +250,39 @@ function AppointmentCard({ appointment, isPast }: { appointment: any, isPast?: b
           <h3 className="font-semibold text-slate-900">Dr. {doctorName}</h3>
           <p className="text-sm text-slate-500">{appointment.doctor.specialty}</p>
         </div>
+        {/* Status reflects DB status (CONFIRMED after payment) */}
         <StatusBadge status={status} />
       </div>
 
       <div className="space-y-2 text-sm text-slate-600">
         <div className="flex items-center gap-2">
-          <span className="font-medium">Date:</span> {date}
+          <span className="font-medium">Fecha:</span> {date}
         </div>
         <div className="flex items-center gap-2">
-          <span className="font-medium">Time:</span> {time}
+          <span className="font-medium">Hora:</span> {time}
+        </div>
+        <div className="flex items-center gap-2">
+            <span className="font-medium">Tipo:</span> 
+            <span className={`capitalize ${appointment.appointmentType === 'virtual' ? 'text-indigo-600 font-semibold' : 'text-slate-600'}`}>
+                {appointment.appointmentType === 'virtual' ? 'Consulta Virtual' : 'Visita Presencial'}
+            </span>
         </div>
         {appointment.payment && (
           <div className="mt-4 pt-4 border-t border-slate-100 flex justify-between items-center text-xs">
-            <span>Amt: {appointment.payment.amount / 100} {appointment.payment.currency}</span>
+            <span>Monto: {appointment.payment.amount / 100} {appointment.payment.currency}</span>
             <span className="text-slate-400">Ref: {appointment.payment.providerReference.slice(0, 8)}...</span>
           </div>
         )}
       </div>
 
-      {!isPast && status === 'PENDING_PAYMENT' && (
+      {!isPast && status === 'PENDING_PAYMENT' && (!appointment.payment || appointment.payment.status !== 'PAID') && (
         <div className="mt-4">
-          <Button size="sm" variant="outline" className="w-full">Pay Now</Button>
+          <PaymentModal 
+            appointmentId={appointment.id} 
+            amount={100} // Default simulation amount
+            currency="PEN"
+            doctorName={doctorName}
+          />
         </div>
       )}
     </div>

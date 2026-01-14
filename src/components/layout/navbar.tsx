@@ -4,6 +4,7 @@ import { verifySession } from '@/lib/session';
 import { Button } from '@/components/ui/core';
 import { logout } from '@/actions/auth';
 import { Mail, Phone, User } from 'lucide-react';
+import { MobileMenu } from './mobile-menu';
 
 export async function Navbar() {
   const session = await verifySession();
@@ -82,7 +83,7 @@ export async function Navbar() {
                 </span>
 
                 {/* Logout Form */}
-                <form action={logout}>
+                <form action={logout} className="hidden md:block">
                   <button type="submit" className="text-sm font-medium text-red-600 hover:text-red-700 transition flex items-center gap-1">
                     Cerrar Sesión
                   </button>
@@ -90,13 +91,20 @@ export async function Navbar() {
               </div>
             ) : (
               <>
-                <a href="tel:+51987654321">
+                <a href="tel:+51987654321" className="hidden md:block">
                   <Button size="sm" className="bg-[#c8a882] hover:bg-[#b89772] text-white border-none shadow-md flex items-center gap-2">
                     <Phone size={16} /> Reservar Cita
                   </Button>
                 </a>
               </>
             )}
+
+            {/* Mobile Menu Trigger */}
+            <MobileMenu 
+              userRole={userRole} 
+              isAuth={!!session?.userId} 
+              userId={session?.userId} 
+            />
           </div>
         </div>
       </nav>
