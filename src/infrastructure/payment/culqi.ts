@@ -15,7 +15,7 @@ export interface CulqiOrder {
 }
 
 export async function createOrder(amount: number, currency: string, description: string, email: string, clientDetails: any): Promise<CulqiOrder> {
-  if (!PRIVATE_KEY) {
+  if (!PRIVATE_KEY || PRIVATE_KEY === "testing-culqi-key") {
     // For development without keys, return a mock?
     if (process.env.NODE_ENV === 'development') {
       return {
