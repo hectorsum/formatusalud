@@ -17,7 +17,7 @@ export interface CulqiOrder {
 export async function createOrder(amount: number, currency: string, description: string, email: string, clientDetails: any): Promise<CulqiOrder> {
   if (!PRIVATE_KEY || PRIVATE_KEY === "testing-culqi-key") {
     // For development without keys, return a mock?
-    if (process.env.NODE_ENV === 'development') {
+    // if (process.env.NODE_ENV === 'development') {
       return {
         id: `ord_mock_${Date.now()}`,
         amount,
@@ -27,7 +27,7 @@ export async function createOrder(amount: number, currency: string, description:
         state: 'pending',
         expiration_date: Math.floor(Date.now() / 1000) + 3600
       } as CulqiOrder;
-    }
+    // }
     throw new Error('CULQI_PRIVATE_KEY not configured');
   }
 
