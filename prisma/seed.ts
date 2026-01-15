@@ -12,17 +12,17 @@ async function main() {
 
   const doctorsData = [
     {
-      name: "Dr. Kilder García Murga",
+      name: "Kilder García Murga",
       email: "kilder.garcia@formatusalud.com",
       specialty: "Urología"
     },
     {
-      name: "Dra. Laura Romero",
+      name: "Laura Romero",
       email: "laura.romero@formatusalud.com",
       specialty: "Dermatología"
     },
     {
-      name: "Dr. Juan Carlos Valverde",
+      name: "Juan Carlos Valverde",
       email: "juan.valverde@formatusalud.com",
       specialty: "Coloproctología y Cirugía General"
     }
