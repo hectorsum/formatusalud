@@ -82,7 +82,9 @@ export default function Home() {
                   Nuestros médicos están capacitados en prácticamente todas las subespecialidades. Ofrecemos los servicios más completos de la región.
                 </p>
                 <div className="flex items-center gap-2 text-[#c8a882] font-bold group-hover:gap-3 transition-all">
-                  Conocer Equipo <ArrowRight className="w-5 h-5" />
+                  <Link href="/medicos">
+                    Conocer Equipo <ArrowRight className="w-5 h-5" />
+                  </Link>
                 </div>
               </div>
             </div>
@@ -103,7 +105,9 @@ export default function Home() {
                   Nos comprometemos a brindar una atención inigualable e innovadora a las comunidades a las que servimos. Desde el diagnóstico hasta el tratamiento.
                 </p>
                 <div className="flex items-center gap-2 text-[#c8a882] font-bold group-hover:gap-3 transition-all">
-                  Leer Más <ArrowRight className="w-5 h-5" />
+                  <Link href="/nosotros">
+                    Leer Más <ArrowRight className="w-5 h-5" />
+                  </Link>
                 </div>
               </div>
             </div>

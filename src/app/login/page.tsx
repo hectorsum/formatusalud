@@ -36,7 +36,9 @@ function LoginFormContent() {
         <div className="mx-auto w-full max-w-[400px]">
           {/* Logo */}
           <div className="mb-8 flex justify-center">
-            <Image src="/logo.svg" alt="FormaTuSalud" width={180} height={50} className="h-12 w-auto" />
+            <Link href="/">
+              <Image src="/logo.svg" alt="FormaTuSalud" width={180} height={50} className="h-12 w-auto" />
+            </Link>
           </div>
 
           <div className="mb-8 text-center text-sm text-slate-600">
